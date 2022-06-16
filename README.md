@@ -2,7 +2,7 @@
 這是從https://github.com/dcomartin/PracticalOrleans ，翻改過來的，提昇到.Net5.0，Orleans提昇到3.5.1版。
 
 關於Orleans的原理與使用，可參考下列網址
-https://www.michalbialecki.com/en/2018/12/07/microsoft-orleans-is-it-fast/
+https://www.michalbialecki.com/en/2018/03/05/getting-started-microsoft-orleans/
 
 Orleans的應用模式之一，Smart Cache Pattern，可參考以下網址
 https://codeopinion.com/orleans-smart-cache-pattern/
