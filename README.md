@@ -8,13 +8,13 @@ Orleans的應用模式之一，Smart Cache Pattern，可參考以下網址
 https://codeopinion.com/orleans-smart-cache-pattern/
 
 專案中，有4種Grain
-1、CounterGrain
+1. CounterGrain
   狀態置於Grain的私有變數
-2、CustomerGrain
+2. CustomerGrain
   狀態儲存配合Orleans的儲存機制，存在記憶體中
-3、InventoryItemGrain
+3. InventoryItemGrain
   使用一個外部DB-LiteDB來保存狀態
-4、BankAccountGrain
+4. BankAccountGrain
   使用外部DB-Sql Server + SqlStreamStore，採用Event Sourcing的方式儲存。
 
 會研究這個，是覺得比之Redis方便許多，讀取時全從記憶體拿，寫入時則只有單純的Insert。
