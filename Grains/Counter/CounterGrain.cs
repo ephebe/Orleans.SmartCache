@@ -2,21 +2,19 @@
 using GrainInterface;
 using Orleans;
 
-namespace Grains.Counter
+namespace Grains.Counter;
+public class Counter : Grain, ICounterGrain
 {
-    public class Counter : Grain, ICounterGrain
+    private int _counter;
+
+    public Task Increment(int increment)
     {
-        private int _counter;
+        _counter += increment;
+        return Task.CompletedTask;
+    }
 
-        public Task Increment(int increment)
-        {
-            _counter += increment;
-            return Task.CompletedTask;
-        }
-
-        public Task<int> GetCount()
-        {
-            return Task.FromResult(_counter);
-        }
+    public Task<int> GetCount()
+    {
+        return Task.FromResult(_counter);
     }
 }

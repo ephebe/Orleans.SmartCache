@@ -1,15 +1,8 @@
-﻿using Orleans;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace GrainInterface;
 
-namespace GrainInterface
+public interface IInventoryItemGrain : IGrainWithGuidKey
 {
-    public interface IInventoryItemGrain : IGrainWithGuidKey
-    {
-        Task Increment(int qty);
-        Task Decrement(int qty);
-        Task<int> Quantity();
-    }
+    Task Increment(int qty);
+    Task Decrement(int qty);
+    Task<int> Quantity();
 }

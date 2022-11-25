@@ -30,7 +30,6 @@ namespace Silo
                        builder
                         .UseLocalhostClustering(serviceId: "SmartCacheApp", clusterId: "Test")
                         .AddMemoryGrainStorage("MemoryStore")
-                        .ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(InventoryItemGrain).Assembly).WithReferences())
                         .ConfigureLogging(logging => logging.AddConsole());
                    })
                    .ConfigureServices(services => 

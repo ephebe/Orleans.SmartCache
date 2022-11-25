@@ -1,13 +1,8 @@
-﻿using Orleans;
-using System;
-using System.Threading.Tasks;
+﻿namespace GrainInterface;
 
-namespace GrainInterface
+public interface IBankAccountGrain : IGrainWithGuidKey
 {
-    public interface IBankAccountGrain : IGrainWithGuidKey
-    {
-        Task Deposit(decimal amount);
-        Task Withdraw(decimal amount);
-        Task<decimal> Balance();
-    }
+    Task Deposit(decimal amount);
+    Task Withdraw(decimal amount);
+    Task<decimal> Balance();
 }

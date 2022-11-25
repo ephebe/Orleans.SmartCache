@@ -12,118 +12,119 @@ using Orleans.Providers;
 using SqlStreamStore;
 using SqlStreamStore.Streams;
 
-namespace Grains.BankAccount
+namespace Grains.BankAccount;
+
+[StorageProvider(ProviderName = "MemoryStore")]
+public class BankAccountGrain : JournaledGrain<BankAccountState>, IBankAccountGrain
 {
-    [StorageProvider(ProviderName = "MemoryStore")]
-    public class BankAccountGrain : JournaledGrain<BankAccountState>, IBankAccountGrain
+    private string _stream;
+    private IStreamStore _store;
+
+    const int Defaultport = 1113;
+
+    public BankAccountGrain(IStreamStore streamStore)
     {
-        private string _stream;
-        private IStreamStore _store;
+        _store = streamStore;
+    }
 
-        const int Defaultport = 1113;
+    public override async Task OnActivateAsync(CancellationToken cancellationToken)
+    {
+        _stream = $"{GetType().Name}-{this.GetPrimaryKey()}";
 
-        public BankAccountGrain(IStreamStore streamStore)
+        await Transactions();
+
+        await ConfirmEvents();
+
+        await base.OnActivateAsync(cancellationToken);
+    }
+
+    public override Task OnDeactivateAsync(DeactivationReason reason, CancellationToken cancellationToken)
+    {
+        _store.Dispose();
+        return base.OnDeactivateAsync(reason, cancellationToken);
+    }
+
+    public async Task Transactions()
+    {
+        var endOfStream = false;
+        var startVersion = 0;
+
+        while (endOfStream == false)
         {
-            _store = streamStore;
-        }
+            var stream = await _store.ReadStreamForwards(_stream, startVersion, 10);
+            endOfStream = stream.IsEnd;
+            startVersion = stream.NextStreamVersion;
 
-        public override async Task OnActivateAsync()
-        {
-            _stream = $"{GetType().Name}-{this.GetPrimaryKey()}";
-
-            await Transactions();
-
-            await ConfirmEvents();
-        }
-
-        public override Task OnDeactivateAsync()
-        {
-            _store.Dispose();
-            return Task.CompletedTask;
-        }
-
-        public async Task Transactions()
-        {
-            var endOfStream = false;
-            var startVersion = 0;
-
-            while (endOfStream == false)
+            foreach (var msg in stream.Messages)
             {
-                var stream = await _store.ReadStreamForwards(_stream, startVersion, 10);
-                endOfStream = stream.IsEnd;
-                startVersion = stream.NextStreamVersion;
-
-                foreach (var msg in stream.Messages)
+                switch (msg.Type)
                 {
-                    switch (msg.Type)
-                    {
-                        case "Deposited":
-                            var depositedJson = await msg.GetJsonData();
-                            var deposited = JsonConvert.DeserializeObject<Deposited>(depositedJson);
-                            base.RaiseEvent(deposited);
-                            break;
-                        case "Withdrawn":
-                            var withdrawnJson = await msg.GetJsonData();
-                            var withdrawn = JsonConvert.DeserializeObject<Withdrawn>(withdrawnJson);
-                            base.RaiseEvent(withdrawn);
-                            break;
-                    }
+                    case "Deposited":
+                        var depositedJson = await msg.GetJsonData();
+                        var deposited = JsonConvert.DeserializeObject<Deposited>(depositedJson);
+                        base.RaiseEvent(deposited);
+                        break;
+                    case "Withdrawn":
+                        var withdrawnJson = await msg.GetJsonData();
+                        var withdrawn = JsonConvert.DeserializeObject<Withdrawn>(withdrawnJson);
+                        base.RaiseEvent(withdrawn);
+                        break;
                 }
             }
         }
-
-        public async Task Deposit(decimal amount)
-        {
-            await RaiseEvent(new Deposited
-            {
-                Amount = amount
-            });
-        }
-
-        public async Task Withdraw(decimal amount)
-        {
-            await RaiseEvent(new Withdrawn
-            {
-                Amount = amount
-            });
-        }
-
-        public Task<decimal> Balance()
-        {
-            return Task.FromResult(State.Balance);
-        }
-
-        private async Task RaiseEvent(BankAccountEvent evnt)
-        {
-            base.RaiseEvent(evnt);
-            await ConfirmEvents();
-
-            try
-            {
-                await _store.AppendToStream(_stream, ExpectedVersion.Any, new NewStreamMessage(Guid.NewGuid(), evnt.GetType().Name, JsonConvert.SerializeObject(evnt)));
-            }
-            catch (Exception wx)
-            {
-                throw wx;
-            }
-
-        }
     }
 
-    public class BankAccountState
+    public async Task Deposit(decimal amount)
     {
-        public decimal Balance { get; set; }
-
-        public BankAccountState Apply(Deposited evnt)
+        await RaiseEvent(new Deposited
         {
-            Balance += evnt.Amount;
-            return this;
+            Amount = amount
+        });
+    }
+
+    public async Task Withdraw(decimal amount)
+    {
+        await RaiseEvent(new Withdrawn
+        {
+            Amount = amount
+        });
+    }
+
+    public Task<decimal> Balance()
+    {
+        return Task.FromResult(State.Balance);
+    }
+
+    private async Task RaiseEvent(BankAccountEvent evnt)
+    {
+        base.RaiseEvent(evnt);
+        await ConfirmEvents();
+
+        try
+        {
+            await _store.AppendToStream(_stream, ExpectedVersion.Any, new NewStreamMessage(Guid.NewGuid(), evnt.GetType().Name, JsonConvert.SerializeObject(evnt)));
+        }
+        catch (Exception wx)
+        {
+            throw wx;
         }
 
-        public BankAccountState Apply(Withdrawn evnt)
-        {
-            Balance -= evnt.Amount;
-            return this;
-        }
+    }
+}
+
+public class BankAccountState
+{
+    public decimal Balance { get; set; }
+
+    public BankAccountState Apply(Deposited evnt)
+    {
+        Balance += evnt.Amount;
+        return this;
+    }
+
+    public BankAccountState Apply(Withdrawn evnt)
+    {
+        Balance -= evnt.Amount;
+        return this;
     }
 }

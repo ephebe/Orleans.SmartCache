@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace GrainInterface
+namespace GrainInterface;
+
+public class CustomerState
 {
-    public class CustomerState
-    {
-        public Guid Id { get; set; }
-        public string Name { get; set; }
-    }
+    public Guid Id { get; set; }
+    public string Name { get; set; }
 }

@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace GrainInterface
+namespace GrainInterface;
+
+public interface ICustomerGrain : IStateHolderGrain<CustomerState> 
 {
-    public interface ICustomerGrain : IStateHolderGrain<CustomerState> 
-    {
-    
-    }
 
 }
