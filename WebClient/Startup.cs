@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Orleans;
+using Polly;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,7 +30,6 @@ namespace WebClient
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddBotwin();
             services.AddSingleton<IClusterClient>(provider => DemoOrleansClient.ClusterClient);
 
             services.Configure<KestrelServerOptions>(options =>
@@ -45,8 +45,32 @@ namespace WebClient
             {
                 app.UseDeveloperExceptionPage();
             }
+        }
 
-            app.UseBotwin();
+        private IClusterClient CreateOrleansClient() 
+        {
+            return Policy<IClusterClient>
+                .Handle<Exception>()
+                .WaitAndRetry(new[]
+                {
+                    TimeSpan.FromSeconds(1),
+                    TimeSpan.FromSeconds(2),
+                    TimeSpan.FromSeconds(3)
+                })
+                .Execute(() =>
+                {
+                    var builder = new ClientBuilder()
+                        .UseLocalhostClustering(serviceId: "SmartCacheApp", clusterId: "Test")
+                        .ConfigureApplicationParts(parts =>
+                        {
+                            parts.AddApplicationPart(typeof(BankAccountGrain).Assembly).WithReferences();
+                        })
+                        .ConfigureLogging(logging => logging.AddConsole());
+
+                    var client = builder.Build();
+                    client.Connect().Wait();
+                    return client;
+                });
         }
     }
 }

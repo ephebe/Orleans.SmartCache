@@ -3,24 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GrainInterface;
 using LiteDB;
 using Orleans;
 
-namespace Grains
+namespace Grains.InventoryItem
 {
-    public interface IInventoryItemGrain : IGrainWithGuidKey
-    {
-        Task Increment(int qty);
-        Task Decrement(int qty);
-        Task<int> Quantity();
-    }
-
-    public class InventoryItemState
-    {
-        public Guid Id { get; set; }
-        public int Quantity { get; set; }
-    }
-
     public class InventoryItemGrain : Grain, IInventoryItemGrain
     {
         private LiteDatabase _db;

@@ -1,18 +1,13 @@
 ﻿using System.Threading.Tasks;
+using GrainInterface;
 using Orleans;
 
-namespace Grains
+namespace Grains.Counter
 {
-    public interface ICounterGrain : IGrainWithStringKey
-    {
-        Task Increment(int increment);
-        Task<int> GetCount();
-    }
-
     public class Counter : Grain, ICounterGrain
     {
         private int _counter;
-        
+
         public Task Increment(int increment)
         {
             _counter += increment;

@@ -10,47 +10,44 @@ using Orleans;
 
 namespace WebClient
 {
-    public class InventoryItemModule : BotwinModule
-    {
-        public InventoryItemModule(IClusterClient clusterClient)
-        {
-            Get("/inventory/{Id:Guid}", async (request, response, routeData) =>
-            {
-                var inventoryItemId = Guid.Parse(routeData.Values["Id"].ToString());
-                var grain = clusterClient.GetGrain<IInventoryItemGrain>(inventoryItemId);
-                var currentQty = await grain.Quantity();
-                await response.WriteAsync(currentQty.ToString());
-            });
+    //public class InventoryItemModule : BotwinModule
+    //{
+    //    public InventoryItemModule(IClusterClient clusterClient)
+    //    {
+    //        Get("/inventory/{Id:Guid}", async (request, response, routeData) =>
+    //        {
+    //            var inventoryItemId = Guid.Parse(routeData.Values["Id"].ToString());
+    //            var grain = clusterClient.GetGrain<IInventoryItemGrain>(inventoryItemId);
+    //            var currentQty = await grain.Quantity();
+    //            await response.WriteAsync(currentQty.ToString());
+    //        });
 
-            Post("/inventory", async (request, response, _) =>
-            {
-                var inventoryItemId = Guid.NewGuid();
-                var grain = clusterClient.GetGrain<IInventoryItemGrain>(inventoryItemId);
+    //        Post("/inventory", async (request, response, _) =>
+    //        {
+    //            var inventoryItemId = Guid.NewGuid();
+    //            var grain = clusterClient.GetGrain<IInventoryItemGrain>(inventoryItemId);
 
-                response.StatusCode = 201;
-                response.Headers.Add(new KeyValuePair<string, StringValues>("Location", 
-                    $"/inventory/{inventoryItemId}"));
-            });
+    //            response.StatusCode = 201;
+    //            response.Headers.Add(new KeyValuePair<string, StringValues>("Location", 
+    //                $"/inventory/{inventoryItemId}"));
+    //        });
 
-            Post("/inventory/{Id:Guid}/increment", async (request, response, routeData) =>
-            {
-                var inventoryItemId = Guid.Parse(routeData.Values["Id"].ToString());
-                var grain = clusterClient.GetGrain<IInventoryItemGrain>(inventoryItemId);
+    //        Post("/inventory/{Id:Guid}/increment", async (request, response, routeData) =>
+    //        {
+    //            var inventoryItemId = Guid.Parse(routeData.Values["Id"].ToString());
+    //            var grain = clusterClient.GetGrain<IInventoryItemGrain>(inventoryItemId);
 
-                var body = request.Bind<InventoryRequest>();
-                if (body.Quantity >= 0)
-                {
-                    await grain.Increment(body.Quantity);
-                }
+    //            var body = request.Bind<InventoryRequest>();
+    //            if (body.Quantity >= 0)
+    //            {
+    //                await grain.Increment(body.Quantity);
+    //            }
 
-                var currentQty = await grain.Quantity();
-                await response.WriteAsync(currentQty.ToString());
-            });
-        }
-    }
+    //            var currentQty = await grain.Quantity();
+    //            await response.WriteAsync(currentQty.ToString());
+    //        });
+    //    }
+    //}
 
-    public class InventoryRequest
-    {
-        public int Quantity { get; set; }
-    }
+    
 }

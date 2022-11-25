@@ -2,6 +2,7 @@
 using System.IO;
 using System.Threading.Tasks;
 using Grains;
+using Grains.InventoryItem;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -29,7 +30,7 @@ namespace Silo
                        builder
                         .UseLocalhostClustering(serviceId: "SmartCacheApp", clusterId: "Test")
                         .AddMemoryGrainStorage("MemoryStore")
-                        .ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(IInventoryItemGrain).Assembly).WithReferences())
+                        .ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(InventoryItemGrain).Assembly).WithReferences())
                         .ConfigureLogging(logging => logging.AddConsole());
                    })
                    .ConfigureServices(services => 

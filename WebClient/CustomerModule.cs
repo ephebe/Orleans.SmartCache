@@ -7,27 +7,27 @@ using Microsoft.Extensions.Primitives;
 
 namespace WebClient
 {
-    public class CustomerModule : BotwinModule
-    {
-        public CustomerModule()
-        {
-            Get("/customers/{customerId:Guid}", async (request, response, routeData) =>
-            {
-                var customer = await CustomerStateService
-                    .GetCustomer(Guid.Parse(routeData.Values["customerId"].ToString()));
+    //public class CustomerModule : BotwinModule
+    //{
+    //    public CustomerModule()
+    //    {
+    //        Get("/customers/{customerId:Guid}", async (request, response, routeData) =>
+    //        {
+    //            var customer = await CustomerStateService
+    //                .GetCustomer(Guid.Parse(routeData.Values["customerId"].ToString()));
 
-                await response.Negotiate(customer);
-            });
+    //            await response.Negotiate(customer);
+    //        });
 
-            Post("/customers", async (request, response, _) =>
-            {
-                var customerId = Guid.NewGuid();
-                await CustomerStateService.CreateCustomer(customerId, "CodeOpinion");
+    //        Post("/customers", async (request, response, _) =>
+    //        {
+    //            var customerId = Guid.NewGuid();
+    //            await CustomerStateService.CreateCustomer(customerId, "CodeOpinion");
 
-                response.StatusCode = 201;
-                response.Headers.Add(new KeyValuePair<string, StringValues>("Location", 
-                    $"/customers/{customerId}"));
-            });
-        }
-    }
+    //            response.StatusCode = 201;
+    //            response.Headers.Add(new KeyValuePair<string, StringValues>("Location", 
+    //                $"/customers/{customerId}"));
+    //        });
+    //    }
+    //}
 }

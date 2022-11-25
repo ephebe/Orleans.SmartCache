@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Grains\Grains.csproj" />
+    <ProjectReference Include="..\GrainInterface\GrainInterface.csproj" />
   </ItemGroup>
 
 </Project>

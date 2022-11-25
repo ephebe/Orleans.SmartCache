@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using GrainInterface;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Orleans;
@@ -11,24 +12,8 @@ using Orleans.Providers;
 using SqlStreamStore;
 using SqlStreamStore.Streams;
 
-namespace Grains
+namespace Grains.BankAccount
 {
-    public abstract class BankAccountEvent
-    {
-        public decimal Amount { get; set; }
-    }
-
-    public class Deposited : BankAccountEvent { }
-
-    public class Withdrawn : BankAccountEvent { }
-
-    public interface IBankAccountGrain : IGrainWithGuidKey
-    {
-        Task Deposit(decimal amount);
-        Task Withdraw(decimal amount);
-        Task<decimal> Balance();
-    }
-
     [StorageProvider(ProviderName = "MemoryStore")]
     public class BankAccountGrain : JournaledGrain<BankAccountState>, IBankAccountGrain
     {
@@ -61,7 +46,7 @@ namespace Grains
         {
             var endOfStream = false;
             var startVersion = 0;
-          
+
             while (endOfStream == false)
             {
                 var stream = await _store.ReadStreamForwards(_stream, startVersion, 10);
@@ -117,11 +102,11 @@ namespace Grains
             {
                 await _store.AppendToStream(_stream, ExpectedVersion.Any, new NewStreamMessage(Guid.NewGuid(), evnt.GetType().Name, JsonConvert.SerializeObject(evnt)));
             }
-            catch (Exception wx) 
+            catch (Exception wx)
             {
                 throw wx;
             }
-            
+
         }
     }
 

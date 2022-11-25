@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31702.278
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32526.322
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silo", "Silo\Silo.csproj", "{30282A82-4E5E-43FF-BD76-3924984F8EFB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Grains", "Grains\Grains.csproj", "{AF5D017F-CD0F-4E6C-A8A5-911D869C0833}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebClient", "WebClient\WebClient.csproj", "{356D6D4E-9D3D-4D5A-B0AA-63554E5EB955}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebClient", "WebClient\WebClient.csproj", "{356D6D4E-9D3D-4D5A-B0AA-63554E5EB955}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GrainInterface", "GrainInterface\GrainInterface.csproj", "{6D33166D-9B4D-48A3-A3DE-1878DD999078}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{356D6D4E-9D3D-4D5A-B0AA-63554E5EB955}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{356D6D4E-9D3D-4D5A-B0AA-63554E5EB955}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{356D6D4E-9D3D-4D5A-B0AA-63554E5EB955}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D33166D-9B4D-48A3-A3DE-1878DD999078}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D33166D-9B4D-48A3-A3DE-1878DD999078}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D33166D-9B4D-48A3-A3DE-1878DD999078}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D33166D-9B4D-48A3-A3DE-1878DD999078}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
