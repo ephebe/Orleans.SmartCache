@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +10,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Orleans;
 using Orleans.Hosting;
-using Polly;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,13 +29,12 @@ namespace WebClient
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var clusterClient = CreateOrleansClient();
-            services.AddSingleton(provider => clusterClient);
-
             services.Configure<KestrelServerOptions>(options =>
             {
                 options.AllowSynchronousIO = true;
             });
+
+            services.AddControllers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -45,32 +44,13 @@ namespace WebClient
             {
                 app.UseDeveloperExceptionPage();
             }
-        }
 
-        private IClusterClient CreateOrleansClient() 
-        {
-            return Policy<IClusterClient>
-                .Handle<Exception>()
-                .WaitAndRetry(new[]
-                {
-                    TimeSpan.FromSeconds(1),
-                    TimeSpan.FromSeconds(2),
-                    TimeSpan.FromSeconds(3)
-                })
-                .Execute(() =>
-                {
-                    var builder = new ClientBuilder()
-                        .UseLocalhostClustering(serviceId: "SmartCacheApp", clusterId: "Test")
-                        .ConfigureApplicationParts(parts =>
-                        {
-                            parts.AddApplicationPart(typeof(BankAccountGrain).Assembly).WithReferences();
-                        })
-                        .ConfigureLogging(logging => logging.AddConsole());
+            app.UseRouting();
 
-                    var client = builder.Build();
-                    client.Connect().Wait();
-                    return client;
-                });
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
         }
     }
 }
