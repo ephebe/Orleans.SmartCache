@@ -6,8 +6,11 @@ using System.Threading.Tasks;
 
 namespace Grains.BankAccount
 {
+    [Serializable]
+    [GenerateSerializer, Immutable]
     public class BankAccountState
     {
+        [Id(0)]
         public decimal Balance { get; set; }
 
         public BankAccountState Apply(Deposited evnt)

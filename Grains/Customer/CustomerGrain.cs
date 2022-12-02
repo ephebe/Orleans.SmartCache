@@ -11,8 +11,7 @@ public class CustomerGrain : Grain, ICustomerGrain
 
     public CustomerGrain(
        [PersistentState(
-            stateName: "Customer",
-            storageName: "CustomerStore")]
+            stateName: "Customer")]
         IPersistentState<CustomerState> customer) => _customer = customer;
 
     public Task<CustomerState> GetItem()

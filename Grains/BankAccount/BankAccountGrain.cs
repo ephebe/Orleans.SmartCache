@@ -14,7 +14,7 @@ using SqlStreamStore.Streams;
 
 namespace Grains.BankAccount;
 
-[StorageProvider(ProviderName = "MemoryStore")]
+[LogConsistencyProvider(ProviderName = "LogStorage")]
 public class BankAccountGrain : JournaledGrain<BankAccountState>, IBankAccountGrain
 {
     private string _stream;

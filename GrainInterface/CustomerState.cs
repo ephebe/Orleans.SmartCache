@@ -4,6 +4,7 @@ using System.Text;
 
 namespace GrainInterface;
 
+[Serializable]
 [GenerateSerializer,Immutable]
 public sealed record CustomerState
 {
