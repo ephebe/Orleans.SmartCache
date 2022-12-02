@@ -111,20 +111,3 @@ public class BankAccountGrain : JournaledGrain<BankAccountState>, IBankAccountGr
 
     }
 }
-
-public class BankAccountState
-{
-    public decimal Balance { get; set; }
-
-    public BankAccountState Apply(Deposited evnt)
-    {
-        Balance += evnt.Amount;
-        return this;
-    }
-
-    public BankAccountState Apply(Withdrawn evnt)
-    {
-        Balance -= evnt.Amount;
-        return this;
-    }
-}

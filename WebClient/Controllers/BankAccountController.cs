@@ -18,12 +18,21 @@ namespace WebClient.Controllers
 
         [Route("{accountId:Guid}")]
         [HttpGet]
-        public async Task<decimal> GetBalance([FromQuery] Guid accountId) 
+        public async Task<decimal> GetBalance(Guid accountId) 
         {
             var grain = _clusterClient.GetGrain<IBankAccountGrain>(accountId);
             var balance = await grain.Balance();
 
             return balance;
+        }
+
+        [HttpPost]
+        public IActionResult CreateNew()
+        {
+            var accountId = Guid.NewGuid();
+            var grain = _clusterClient.GetGrain<IBankAccountGrain>(accountId);
+
+            return Created("/bank/accounts/{accountId}", new { accountId = accountId });
         }
 
         [Route("deposit")]

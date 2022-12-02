@@ -18,7 +18,7 @@ namespace WebClient.Controllers
 
         [Route("{customerId:Guid}")]
         [HttpGet]
-        public async Task<CustomerState> GetCustomer([FromQuery] Guid customerId)
+        public async Task<CustomerState> GetCustomer(Guid customerId)
         {
             var grain =  _clusterClient.GetGrain<ICustomerGrain>(customerId);
             var customer = await grain.GetItem();

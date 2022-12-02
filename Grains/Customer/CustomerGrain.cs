@@ -1,14 +1,30 @@
 ﻿using System;
 using System.Threading.Tasks;
 using GrainInterface;
-using Grains.StateHolder;
-using Orleans.Providers;
+using Orleans.Runtime;
 
 namespace Grains.Customer;
 
-
-[StorageProvider(ProviderName = "MemoryStore")]
-public class CustomerGrain : StateHolderGrain<CustomerState>, ICustomerGrain 
+public class CustomerGrain : Grain, ICustomerGrain 
 {
+    private readonly IPersistentState<CustomerState> _customer;
 
+    public CustomerGrain(
+       [PersistentState(
+            stateName: "Customer",
+            storageName: "CustomerStore")]
+        IPersistentState<CustomerState> customer) => _customer = customer;
+
+    public Task<CustomerState> GetItem()
+    {
+        return Task.FromResult(_customer.State);
+    }
+
+    public async Task<CustomerState> SetItem(CustomerState customer)
+    {
+        _customer.State = customer;
+        await _customer.WriteStateAsync();
+
+        return _customer.State;
+    }
 }

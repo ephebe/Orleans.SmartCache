@@ -36,7 +36,7 @@ namespace WebClient.Controllers
 
         [Route("{Id:Guid}/increment")]
         [HttpPost]
-        public async Task<int> Increment([FromQuery]Guid Id,[FromBody] InventoryRequest request ) 
+        public async Task<int> Increment(Guid Id,[FromBody] InventoryRequest request ) 
         {
             var grain = _clusterClient.GetGrain<IInventoryItemGrain>(Id);
 

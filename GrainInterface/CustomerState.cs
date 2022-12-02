@@ -4,8 +4,11 @@ using System.Text;
 
 namespace GrainInterface;
 
-public class CustomerState
+[GenerateSerializer,Immutable]
+public sealed record CustomerState
 {
+    [Id(0)]
     public Guid Id { get; set; }
+    [Id(1)]
     public string Name { get; set; }
 }
