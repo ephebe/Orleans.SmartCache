@@ -45,6 +45,8 @@ namespace WebClient.Controllers
             return NoContent();
         }
 
+        [Route("withdraw")]
+        [HttpPost]
         public async Task<IActionResult> Withdraw([FromBody] MoneyRequest request)
         {
             var grain = _clusterClient.GetGrain<IBankAccountGrain>(request.AccountId);
